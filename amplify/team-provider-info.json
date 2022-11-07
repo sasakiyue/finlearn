@@ -1,0 +1,20 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-finlearn-staging-150020-authRole",
+      "UnauthRoleArn": "arn:aws:iam::820027004467:role/amplify-finlearn-staging-150020-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::820027004467:role/amplify-finlearn-staging-150020-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-finlearn-staging-150020-deployment",
+      "UnauthRoleName": "amplify-finlearn-staging-150020-unauthRole",
+      "StackName": "amplify-finlearn-staging-150020",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:820027004467:stack/amplify-finlearn-staging-150020/4284fd20-48ac-11ed-b30b-0ecd08b37bcb",
+      "AmplifyAppId": "d1ns4900u1hvei"
+    },
+    "categories": {
+      "auth": {
+        "finlearn": {}
+      }
+    }
+  }
+}
