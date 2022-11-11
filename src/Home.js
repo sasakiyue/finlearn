@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {
   FlatList,
   Modal,
@@ -8,8 +8,9 @@ import {
   TextInput,
   View,
   Platform,
+  Button,
 } from 'react-native';
-import {DataStore} from 'aws-amplify';
+import {DataStore, Auth} from 'aws-amplify';
 import {User} from './models';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -23,22 +24,39 @@ const Header = () => (
   </View>
 );
 
-function HomeScreen() {
-  const [pointData, setPointData] = useState(null);
-  useEffect(() => {
-    const getPoint = async () => {
-      const getUser = await DataStore.query(User);
-      getUser.map(ur => {
-        setPointData(ur.point);
-      });
-    };
-    getPoint();
-  });
-
+function HomeScreen({user}) {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text>Home!</Text>
-      <Text>{pointData}</Text>
+      <Text>{user.point}</Text>
+    </View>
+  );
+}
+
+function QuizScreen({user}) {
+  //   useEffect(() => {
+  //     const savePoint = async () => {
+  //       await DataStore.save(
+  //         User.copyOf(user, updated => {
+  //           updated.point = user.point + 1;
+  //         }),
+  //       );
+  //     };
+  //     savePoint();
+  //   }, []);
+  const savePoint = async () => {
+    await DataStore.save(
+      User.copyOf(user, updated => {
+        updated.point = user.point + 1;
+        console.log('よう');
+      }),
+    );
+    console.log('かずや');
+  };
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>{user.point}</Text>
+      <Button onPress={savePoint} title="かずや" />
     </View>
   );
 }
@@ -54,6 +72,52 @@ function SettingsScreen() {
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
+  const [currentUserName, setCurrentUserName] = useState(null);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const init = async () => {
+      const currentUser = await Auth.currentUserInfo();
+      setCurrentUserName(currentUser.attributes.email);
+    };
+    init();
+  }, []);
+
+  useEffect(() => {
+    // const getPoint = async () => {
+    //   const user = await DataStore.query(
+    //     User,
+    //     '08039bb4-e9d2-45eb-ab28-355c5b2f3fde',
+    //   );
+    //   console.log(user.point);
+    //   setUserData(user);
+    // };
+    // getPoint();
+
+    // const id = '08039bb4-e9d2-45eb-ab28-355c5b2f3fde';
+    const id = currentUserName;
+    // const userId = currentUserName;
+    DataStore.clear();
+    const subscription = DataStore.observe(User, id).subscribe(msg => {
+      console.log(msg.element);
+      setUserData(msg.element);
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const HomeComponent = useMemo(() => {
+    return () => <HomeScreen user={userData} />;
+  }, [userData]);
+
+  const QuizComponent = useMemo(() => {
+    return () => <QuizScreen user={userData} />;
+  }, [userData]);
+
+  if (!userData) {
+    return null;
+  }
   return (
     <>
       <Header />
@@ -61,7 +125,7 @@ const Home = () => {
         <Tab.Navigator>
           <Tab.Screen
             name="Home"
-            component={HomeScreen}
+            component={HomeComponent}
             options={{
               headerShown: false,
               tabBarIcon: ({color, size}) => (
@@ -71,7 +135,7 @@ const Home = () => {
           />
           <Tab.Screen
             name="クイズ"
-            component={SettingsScreen}
+            component={QuizComponent}
             options={{
               tabBarIcon: ({color, size}) => (
                 <Icon name="trophy" color={color} size={size} />
