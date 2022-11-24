@@ -1,5 +1,85 @@
 export const schema = {
     "models": {
+        "Quiz": {
+            "name": "Quiz",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "question": {
+                    "name": "question",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "choice": {
+                    "name": "choice",
+                    "isArray": false,
+                    "type": "AWSJSON",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "answer": {
+                    "name": "answer",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "refUrl": {
+                    "name": "refUrl",
+                    "isArray": false,
+                    "type": "AWSURL",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Quizzes",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "User": {
             "name": "User",
             "fields": {
@@ -76,5 +156,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "123d75541e868e496ed85f608c9a9b61"
+    "version": "c7fc7d3048c8e2c2f4ea8a687a3b1cc6"
 };
